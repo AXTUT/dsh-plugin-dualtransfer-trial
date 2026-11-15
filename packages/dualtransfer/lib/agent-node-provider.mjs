@@ -443,6 +443,7 @@ export function createAgentNodeProvider({ directory, getContext, transport, now 
     denyReply: (input, assertOwner) => ownedCall('denyReply', input, assertOwner),
     clearHistory: (input, assertOwner) => ownedCall('clearHistory', input, assertOwner),
     completeIncomingBatch: (input, assertOwner) => ownedCall('completeIncomingBatch', input, assertOwner),
+    requestOwned: (input, assertOwner) => ownedCall('requestOwned', input, assertOwner),
     sendMessage: (...args) => serviceCall('sendMessage', args), request: (...args) => serviceCall('request', args),
     progress: (...args) => serviceCall('progress', args), result: (...args) => serviceCall('result', args),
     cancel: (...args) => serviceCall('cancel', args), retry: (...args) => serviceCall('retry', args),

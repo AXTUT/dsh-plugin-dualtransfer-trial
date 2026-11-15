@@ -5,6 +5,7 @@ export const runtimeKeys = Object.freeze(Object.keys(defaults));
 export function createConfigSchema(z) {
   return z.object({
     profilesRoot: z.string().max(8192).default('').description('Explicit profiles root; ordinary changes reload this entry.'),
+    projectGitExecutable: z.string().max(8192).default('').description('项目协作 Git 可执行文件的本机绝对路径；留空使用 PATH 中的 git，修改后重载本插件。Local absolute Git executable for project collaboration; empty uses git on PATH. Changes reload this entry.'),
     enabled: z.boolean().default(false).volatile(),
     sessionId: z.string().max(256).default('').volatile(),
     revision: z.number().min(1).step(1).default(1).volatile(),

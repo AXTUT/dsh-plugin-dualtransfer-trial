@@ -377,6 +377,18 @@ export function createAgentOnlyController({ ctx, defineTool, createUserMessage, 
     const field = action === 'history' ? 'history' : action === 'replyPolicy' || action === 'setReplyPolicy' ? 'replyPolicy' : 'operation';
     return { ...snapshot(captured.sessionId, undefined, undefined, guard), [field]: result };
   }
+  async function requestProjectHandoff(payload, assert) {
+    record(payload, ['sessionId', 'request']);
+    const captured = captureOwnerData(payload.sessionId, assert);
+    if (!captured.scope || !captured.localReady || !captured.contextLocalReady || !captured.peerReady) throw failure('NOT_FOUND');
+    const guard = () => { try { checkOwnerData(captured, assert); return true; } catch { return false; } };
+    try {
+      checkOwnerData(captured, assert);
+      const value = await captured.source.requestOwned(payload.request, guard);
+      checkOwnerData(captured, assert);
+      return value;
+    } catch (error) { checkOwnerData(captured, assert); throw error; }
+  }
   async function ownerAction(action, payload, assert, bindSignal) {
     assertOpen(assert);
     if (OWNER_DATA_ACTIONS.has(action)) return ownerDataAction(action, payload, assert);
@@ -412,7 +424,7 @@ export function createAgentOnlyController({ ctx, defineTool, createUserMessage, 
     const view = snapshot(payload.sessionId, action === 'bind' ? payload.operationId : undefined, action === 'bind' ? value : undefined, assert);
     return action === 'invite' ? { ...view, invitation: value } : { ...view, operation: value };
   }
-  return Object.freeze({ snapshot, start, ownerAction,
+  return Object.freeze({ snapshot, start, ownerAction, requestProjectHandoff,
     async bind(payload, assert, signal) { return ownerAction('bind', payload, assert, signal); }, query,
     dispose() {
       if (disposePromise) return disposePromise;

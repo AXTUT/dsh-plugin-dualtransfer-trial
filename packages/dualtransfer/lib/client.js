@@ -30,6 +30,66 @@ window.__ModuleLoader__.load({
         bindingQuery: "查询本次绑定",
         bindingHelp: "耗时仅在本机计时；不会轮询、自动重试或重新绑定。超时不等于网络故障，请手动查询同一次操作。",
         panelClose: "关闭协作面板",
+        tabProject: "项目",
+        projectIntro: "每端使用独立协作工作区。原项目目录中的改动、暂存和分支保持原样；共同版本是 Git 提交，不是逐键同步。",
+        projectRegister: "登记本机已有 Git 项目（仅本机用户）",
+        projectDirectory: "本机已有项目绝对路径",
+        projectMode: "协作模式",
+        projectParallel: "parallel · 各自发布工作分支，保留两个版本",
+        projectShared: "shared · 预览和集成后发布同一目标分支",
+        projectTarget: "目标分支",
+        projectParticipant: "本端参与者名称",
+        projectId: "项目标识（可留空自动派生）",
+        projectWrites: "显式允许本机会话写入专用协作工作区",
+        projectRegisterHelp: "只登记本机已有仓库，不自动克隆。对端卡片不选择本机路径，也不授予写权限。重复登记返回 ALREADY_BOUND；请使用已有映射。",
+        projectBind: "登记并创建协作工作区",
+        projectConfirmBind: "登记本机项目 {directory}，模式 {mode}，目标 {targetBranch}？将创建独立工作区；本机会话写权限：{writes}。",
+        projectList: "本机会话的项目",
+        projectSelect: "选择项目",
+        projectEmpty: "本机会话尚未登记项目。",
+        projectStatus: "刷新项目状态",
+        projectDiff: "查看当前差异",
+        projectWorktree: "专用协作工作区（在这里编辑）",
+        projectRemote: "登记的远端",
+        projectHead: "当前 HEAD",
+        projectBase: "共同基线",
+        projectWorkBranch: "本端工作分支",
+        projectReadOnly: "只读映射；Git 写操作未开放。",
+        projectChanges: "工作区文件状态（index / worktree）",
+        projectClean: "当前工作区无改动。",
+        projectMerge: "合并状态",
+        projectNoMerge: "未进入冲突解决状态",
+        projectMerging: "正在解决合并；请编辑冲突文件后明确提交",
+        projectConflicts: "冲突文件",
+        projectCheckpoint: "提交选定路径",
+        projectPaths: "要提交的相对文件路径（每行一个，不自动提交全部）",
+        projectPathsHelp: "路径相对于上方专用工作区；只提交明确列出的文件。提交使用项目已有 Git 身份设置。",
+        projectMessage: "提交说明 message",
+        projectConfirmCheckpoint: "在协作工作区提交以下路径：\n{paths}\n\nmessage: {message}\n预期 HEAD: {head}",
+        projectPreview: "fetch 并预览",
+        projectRef: "预览 ref（留空为目标分支）",
+        projectCommit: "指定 commit（可留空；须属于 fetch 到的 ref）",
+        projectPreviewHelp: "只 fetch 已登记的 origin。脏工作区只报告；发生冲突时默认停留在预览，不覆盖文件。",
+        projectIncoming: "待集成提交",
+        projectPreviewId: "预览 ID",
+        projectDirty: "预览发现脏工作区，请先检查并提交；此时不执行集成。",
+        projectIntegrate: "集成此预览",
+        projectAllowConflicts: "显式进入冲突解决状态，保留冲突标记和双方内容",
+        projectConfirmIntegrate: "集成预览 {previewId} 的提交 {commit}？进入冲突解决状态：{allowConflicts}。未勾选时，冲突只预览。",
+        projectPublish: "普通 publish（不 force）",
+        projectPublishHelp: "parallel 发布到本端工作分支；shared 发布到目标分支。远端已前进时，重新 fetch 预览并集成后再发布。",
+        projectConfirmPublish: "用普通 push 将 HEAD {head} 发布到 {branch}？不 force，不自动重试。",
+        projectUnbind: "撤销本机会话项目映射",
+        projectConfirmUnbind: "撤销项目 {projectId} 的本机会话映射？专用工作区、文件修改和全部提交均保留，不做清理。",
+        projectHandoff: "发送项目任务",
+        projectHandoffHelp: "先 publish；Host 会 fetch 核验当前提交可从登记的 origin 取得，再发送项目卡与目标/验收条件。范围每行一项，最多16项、每项512字节；回报预算1–16384字节，默认8192。任务总计遵守16KiB限制。对端先映射本地项目，再自行预览；接收不自动 fetch、合并或执行。ACK 只代表收到。",
+        projectConfirmHandoff: "发送项目 {projectId} 当前提交 {head} 的任务？目标和验收条件按表单发送；收件 ACK 不代表完成。",
+        projectBusy: "正在执行 {action}…",
+        projectReturned: "{action} 已返回；下方为实际结果，不代表对端任务完成。",
+        projectError: "{action} 错误：{code}",
+        projectResult: "操作返回详情（有长度上限）",
+        projectTruncated: "结果已截断；可在专用工作区用 Git 查看完整差异。",
+        projectUnknown: "尚未读取项目状态，请显式刷新。",
         tabConnection: "连接",
         tabHistory: "消息历史",
         tabPolicy: "收件回执",
@@ -503,6 +563,66 @@ window.__ModuleLoader__.load({
         bindingQuery: "Check this binding",
         bindingHelp: "Elapsed time is local only. There is no polling, automatic retry or rebinding. A timeout does not prove a network fault; check this same attempt manually.",
         panelClose: "Close collaboration panel",
+        tabProject: "Projects",
+        projectIntro: "Each participant edits a separate collaboration worktree. Changes, staging and branches in the original directory stay untouched. A shared version means Git commits, not keystroke synchronization.",
+        projectRegister: "Register an existing local Git project (local user only)",
+        projectDirectory: "Absolute path to an existing local project",
+        projectMode: "Collaboration mode",
+        projectParallel: "parallel · publish separate work branches and keep both versions",
+        projectShared: "shared · preview and integrate before publishing one target branch",
+        projectTarget: "Target branch",
+        projectParticipant: "Local participant name",
+        projectId: "Project ID (leave empty to derive it)",
+        projectWrites: "Explicitly allow this local session to write to the dedicated worktree",
+        projectRegisterHelp: "Registers an existing local repository without cloning. Peer cards never select local paths or grant write permission. Duplicate registration returns ALREADY_BOUND; use the existing mapping.",
+        projectBind: "Register and create collaboration worktree",
+        projectConfirmBind: "Register {directory} in {mode} mode for {targetBranch}? A separate worktree will be created. Write permission for this local session: {writes}.",
+        projectList: "Projects for this local session",
+        projectSelect: "Select project",
+        projectEmpty: "This session has no registered project.",
+        projectStatus: "Refresh project status",
+        projectDiff: "View current diff",
+        projectWorktree: "Dedicated collaboration worktree (edit here)",
+        projectRemote: "Registered remote",
+        projectHead: "Current HEAD",
+        projectBase: "Shared base",
+        projectWorkBranch: "Local work branch",
+        projectReadOnly: "Read-only mapping; Git write operations are disabled.",
+        projectChanges: "Worktree file status (index / worktree)",
+        projectClean: "The worktree has no changes.",
+        projectMerge: "Merge state",
+        projectNoMerge: "Not in conflict resolution",
+        projectMerging: "Resolving a merge; edit conflicted files, then explicitly commit",
+        projectConflicts: "Conflicted files",
+        projectCheckpoint: "Commit selected paths",
+        projectPaths: "Relative file paths to commit (one per line; never stages everything)",
+        projectPathsHelp: "Paths are relative to the dedicated worktree above. Only explicitly listed files are committed, using the project's existing Git identity settings.",
+        projectMessage: "Commit message",
+        projectConfirmCheckpoint: "Commit these paths in the collaboration worktree:\n{paths}\n\nmessage: {message}\nExpected HEAD: {head}",
+        projectPreview: "Fetch and preview",
+        projectRef: "Preview ref (empty uses the target branch)",
+        projectCommit: "Commit (optional; must belong to the fetched ref)",
+        projectPreviewHelp: "Fetches only the registered origin. A dirty worktree is reported, not overwritten. Conflicts remain a preview by default.",
+        projectIncoming: "Incoming commit",
+        projectPreviewId: "Preview ID",
+        projectDirty: "The preview found a dirty worktree. Inspect and commit first; integration is disabled now.",
+        projectIntegrate: "Integrate this preview",
+        projectAllowConflicts: "Explicitly enter conflict resolution, keeping markers and both versions",
+        projectConfirmIntegrate: "Integrate commit {commit} from preview {previewId}? Enter conflict resolution: {allowConflicts}. Without the checkbox, conflicts remain a preview.",
+        projectPublish: "Normal publish (never force)",
+        projectPublishHelp: "parallel publishes the local work branch; shared publishes the target branch. If the remote advanced, fetch, preview and integrate again before publishing.",
+        projectConfirmPublish: "Publish HEAD {head} to {branch} with normal push? No force and no automatic retry.",
+        projectUnbind: "Remove this session's project mapping",
+        projectConfirmUnbind: "Remove this session's mapping for {projectId}? Keep the worktree, all edits and commits; nothing is cleaned up.",
+        projectHandoff: "Send project task",
+        projectHandoffHelp: "Publish first. The Host fetches to verify that the current commit is available from the registered origin before sending its card, goal and acceptance criteria. Scope: one item per line, up to 16 items and 512 bytes each. Report budget: 1–16384 bytes, default 8192. The complete task must fit 16KiB. The peer maps its own local project and previews it; receiving a card does not fetch, merge or execute. ACK means receipt only.",
+        projectConfirmHandoff: "Send a task for project {projectId} at commit {head}, with the goal and acceptance criteria in this form? A receipt ACK is not completion.",
+        projectBusy: "Running {action}…",
+        projectReturned: "{action} returned. The actual result below is not proof of peer task completion.",
+        projectError: "{action} error: {code}",
+        projectResult: "Operation result (bounded output)",
+        projectTruncated: "Output is truncated. Use Git in the dedicated worktree for the complete diff.",
+        projectUnknown: "Project status has not been read. Refresh explicitly.",
         tabConnection: "Connection",
         tabHistory: "History",
         tabPolicy: "Receipts",
@@ -2026,6 +2146,331 @@ OWNER_NATIVE_GUARD_BUSY OWNER_NATIVE_GUARD_UNKNOWN OWNER_NATIVE_PARENT_UNKNOWN`.
           ? { rootCause, bindingRootCause, errorCode, resourceErrorCode, drain, invalid } : null;
       } catch { return { rootCause: null, bindingRootCause: null, errorCode: null, resourceErrorCode: null, drain: null, invalid: true }; }
     }
+    // The Client connection and this channel are the existing injected transport, not a new Slot/API.
+    const RPC_CHANNEL = '/dualtransfer-rpc';
+    const PROJECT_ACTIONS = new Set(['bind', 'list', 'status', 'diff', 'checkpoint', 'preview', 'integrate', 'publish', 'unbind', 'handoff']);
+    const PROJECT_WRITES = new Set(['bind', 'checkpoint', 'integrate', 'publish', 'unbind']);
+    const projectObject = value => value !== null && typeof value === 'object' && !Array.isArray(value);
+    const projectText = (value, limit = 8192) => typeof value === 'string' && value.length <= limit && !/[\u0000]/u.test(value);
+    const projectCommit = value => typeof value === 'string' && /^(?:[0-9a-f]{40}|[0-9a-f]{64})$(?![\s\S])/.test(value);
+    function boundedProjectText(value, limit = 65536) {
+      let text;
+      try { text = typeof value === 'string' ? value : JSON.stringify(value, null, 2); } catch { text = ''; }
+      return typeof text === 'string' ? text.slice(0, limit) : '';
+    }
+    function projectError(raw, fallback = 'RPC_FAILED') {
+      const code = diagnosticCode(raw?.code) || fallback;
+      const error = new Error(boundedProjectText(raw?.message, 2048) || code);
+      error.code = code; return error;
+    }
+    function projectRequest(action, input, sessionId) {
+      const invalid = field => { throw projectError({ code: 'INVALID_ARGUMENT', message: field }); };
+      if (!PROJECT_ACTIONS.has(action) || !SESSION.test(sessionId || '') || !projectObject(input)) invalid('action / sessionId');
+      const text = (key, required = true, limit = 8192) => {
+        const value = typeof input[key] === 'string' ? input[key].trim() : '';
+        if (!projectText(value, limit) || required && !value) invalid(key);
+        return value;
+      };
+      const payload = { sessionId };
+      if (action === 'list') return { action, payload };
+      if (action === 'bind') {
+        payload.directory = text('directory', true, 4096); payload.mode = input.mode;
+        if (!['parallel', 'shared'].includes(payload.mode) || typeof input.allowWrites !== 'boolean') invalid('mode / allowWrites');
+        payload.targetBranch = text('targetBranch', true, 200); payload.participant = text('participant', true, 80);
+        payload.allowWrites = input.allowWrites;
+        const id = text('projectId', false, 128); if (id) payload.projectId = id;
+        return { action, payload };
+      }
+      payload.projectId = text('projectId', true, 128);
+      if (['checkpoint', 'publish', 'handoff'].includes(action)) {
+        if (!projectCommit(input.expectedHead)) invalid('expectedHead');
+        payload.expectedHead = input.expectedHead;
+      }
+      if (action === 'checkpoint') {
+        payload.message = text('message', true, 4096);
+        if (!Array.isArray(input.paths) || !input.paths.length || input.paths.length > 200 || input.paths.some(value => {
+          if (!projectText(value, 4096) || !value.trim() || value.includes('\\')) return true;
+          return /^(?:\/|[A-Za-z]:)/.test(value) || value.split('/').some(part => !part || part === '.' || part === '..' || part.toLowerCase() === '.git');
+        })) invalid('paths');
+        payload.paths = [...new Set(input.paths)];
+      } else if (action === 'preview') {
+        const ref = text('ref', false, 211), commit = text('commit', false, 64);
+        if (ref) payload.ref = ref;
+        if (commit) { if (!projectCommit(commit)) invalid('commit'); payload.commit = commit; }
+      } else if (action === 'integrate') {
+        payload.previewId = text('previewId', true, 256);
+        if (input.allowConflicts === true) payload.allowConflicts = true;
+        else if (input.allowConflicts !== undefined && input.allowConflicts !== false) invalid('allowConflicts');
+      } else if (action === 'handoff') {
+        payload.goal = text('goal'); payload.acceptance = text('acceptance');
+        const bytes = value => [...value].reduce((total, char) => { const cp = char.codePointAt(0); return total + (cp <= 127 ? 1 : cp <= 2047 ? 2 : cp <= 65535 ? 3 : 4); }, 0);
+        if (!Array.isArray(input.scope) || input.scope.length > 16 || !input.scope.every(value => projectText(value, 512) && value.trim() && bytes(value) <= 512)) invalid('scope');
+        if (!Number.isSafeInteger(input.outputBudgetBytes) || input.outputBudgetBytes < 1 || input.outputBudgetBytes > 16384) invalid('outputBudgetBytes');
+        payload.scope = input.scope.slice(); payload.outputBudgetBytes = input.outputBudgetBytes;
+      }
+      return { action, payload };
+    }
+    function projectDescriptor(raw) {
+      if (!projectObject(raw) || !projectText(raw.projectId, 256) || !raw.projectId || !['parallel', 'shared'].includes(raw.mode)
+        || !['remote', 'targetBranch', 'participant', 'workBranch', 'worktree'].every(key => projectText(raw[key]) && raw[key])
+        || !projectCommit(raw.head) || !projectCommit(raw.baseCommit) || typeof raw.allowWrites !== 'boolean') {
+        throw projectError({ code: 'INVALID_RESPONSE' });
+      }
+      const data = Object.fromEntries(['projectId', 'mode', 'remote', 'targetBranch', 'participant', 'workBranch', 'worktree', 'head', 'baseCommit', 'allowWrites'].map(key => [key, raw[key]]));
+      if (projectText(raw.root)) data.root = raw.root;
+      return data;
+    }
+    function projectStatus(raw) {
+      const data = projectDescriptor(raw);
+      if (!projectObject(raw.merge) || typeof raw.merge.inProgress !== 'boolean' || !Array.isArray(raw.merge.conflicts)
+        || raw.merge.conflicts.length > 4096 || !raw.merge.conflicts.every(value => projectText(value))
+        || raw.dirty !== undefined && typeof raw.dirty !== 'boolean' || raw.truncated !== undefined && typeof raw.truncated !== 'boolean') {
+        throw projectError({ code: 'INVALID_RESPONSE' });
+      }
+      return { ...data, changes: projectChanges(raw.changes), merge: { inProgress: raw.merge.inProgress, conflicts: raw.merge.conflicts.slice() },
+        ...(raw.dirty === undefined ? {} : { dirty: raw.dirty }), truncated: raw.truncated === true };
+    }
+    function projectChanges(rows, incoming = false) {
+      if (!Array.isArray(rows) || rows.length > 4096 || rows.some(row => !projectObject(row) || !projectText(row.path) || !row.path
+        || (incoming ? !projectText(row.status, 8) || !row.status : !projectText(row.index, 2) || !projectText(row.worktree, 2))
+        || row.originalPath !== undefined && !projectText(row.originalPath))) {
+        throw projectError({ code: 'INVALID_RESPONSE' });
+      }
+      return rows.map(row => ({ path: row.path, ...(incoming ? { status: row.status } : { index: row.index, worktree: row.worktree }),
+        ...(row.originalPath === undefined ? {} : { originalPath: row.originalPath }) }));
+    }
+    function projectReply(action, reply, projectId = null) {
+      if (reply?.ok !== true) throw projectError(reply?.error);
+      const raw = reply.value;
+      if (projectObject(raw?.error)) throw projectError(raw.error);
+      const invalid = () => { throw projectError({ code: 'INVALID_RESPONSE' }); };
+      if (action === 'list') {
+        if (!Array.isArray(raw) || raw.length > 256) return invalid();
+        const projects = raw.map(row => {
+          if (!projectObject(row?.error)) return projectStatus(row);
+          if (!diagnosticCode(row.error.code)) return invalid();
+          return { ...projectDescriptor(row), error: { code: row.error.code, message: boundedProjectText(row.error.message, 2048) } };
+        });
+        if (new Set(projects.map(item => item.projectId)).size !== projects.length) return invalid();
+        return projects;
+      }
+      if (!projectObject(raw) || projectId !== null && action !== 'handoff' && raw.projectId !== projectId) return invalid();
+      if (['bind', 'status'].includes(action)) return projectStatus(raw);
+      if (action === 'checkpoint' || action === 'integrate') {
+        const key = action === 'checkpoint' ? 'committed' : 'integrated';
+        if (typeof raw[key] !== 'boolean') return invalid();
+        return { ...projectStatus(raw), [key]: raw[key] };
+      }
+      if (['diff', 'preview'].includes(action)) {
+        if (!projectCommit(raw.head) || typeof raw.diff !== 'string' || typeof raw.truncated !== 'boolean') return invalid();
+        const data = { projectId: raw.projectId, head: raw.head, changes: projectChanges(raw.changes, action === 'preview'),
+          diff: boundedProjectText(raw.diff), truncated: raw.truncated || raw.diff.length > 65536 };
+        if (action === 'preview') {
+          if (!(raw.dirty === true && raw.previewId === null || projectText(raw.previewId, 256) && raw.previewId) || !projectCommit(raw.incomingCommit) || !projectText(raw.ref, 256)
+            || typeof raw.dirty !== 'boolean' || !Array.isArray(raw.conflicts) || raw.conflicts.length > 4096 || !raw.conflicts.every(value => projectText(value))) return invalid();
+          Object.assign(data, { previewId: raw.previewId, incomingCommit: raw.incomingCommit, ref: raw.ref, dirty: raw.dirty, conflicts: raw.conflicts.slice() });
+        }
+        return data;
+      }
+      if (action === 'publish' && (!projectCommit(raw.head) || raw.published !== true || !projectText(raw.remote) || !projectText(raw.branch))) return invalid();
+      if (action === 'unbind' && (raw.unbound !== true || raw.retained !== true || !projectText(raw.worktree))) return invalid();
+      if (action === 'handoff' && (!projectObject(raw.project) || !projectObject(raw.operation))) return invalid();
+      return raw;
+    }
+    function projectModel() {
+      return { projects: [], projectId: '', status: null, diff: null, preview: null, result: null, error: null, action: '',
+        form: { directory: '', mode: 'parallel', targetBranch: '', participant: '', projectId: '', allowWrites: false,
+          paths: '', message: '', ref: '', commit: '', allowConflicts: false, goal: '', acceptance: '', taskScope: '', outputBudgetBytes: '8192' } };
+    }
+    // This fence supplements, and never changes, the parent connection/session/panel fences.
+    function currentProjectFrame(live, token) {
+      return live?.mounted === true && live.token === token && live.isCurrent() === true;
+    }
+    function currentProjectHandoff(live, token, owner) {
+      return currentProjectFrame(live, token) && live.handoffOwner === owner && live.canHandoff() === true;
+    }
+    function ProjectComponent({ connection, sessionId, projectScope, epoch, locale, isCurrent, canStart, canHandoff, handoffOwner }) {
+      const t = translator(locale), h = React.createElement;
+      const [model, setModel] = React.useState(projectModel), live = React.useRef(null), pending = React.useRef(null), tokenRef = React.useRef(null);
+      if (tokenRef.current?.scope !== projectScope || tokenRef.current?.connection !== connection || tokenRef.current?.sessionId !== sessionId || tokenRef.current?.epoch !== epoch) {
+        tokenRef.current = { scope: projectScope, connection, sessionId, epoch };
+      }
+      const token = tokenRef.current;
+      live.current = { mounted: live.current?.mounted !== false, token, model, isCurrent, canStart, canHandoff, handoffOwner };
+      const current = () => currentProjectFrame(live.current, token);
+      const handoffAllowed = () => currentProjectHandoff(live.current, token, handoffOwner);
+      const available = current() && live.current.canStart() === true && !pending.current && !model.action;
+      function update(change) {
+        if (!current()) return;
+        const next = typeof change === 'function' ? change(live.current.model) : change;
+        live.current.model = next; setModel(next); return next;
+      }
+      function startable(expected = model) { return current() && live.current.model === expected && live.current.canStart() === true && !pending.current && !expected.action; }
+      async function run(action, extra = {}, expected = model) {
+        if (!startable(expected) || action === 'handoff' && !handoffAllowed()) return;
+        let request;
+        try { request = projectRequest(action, extra, sessionId); }
+        catch (error) { update(previous => ({ ...previous, error: { action, code: error.code, message: error.message } })); return; }
+        const abort = new AbortController(), item = { token, abort, timer: null };
+        pending.current = item;
+        const owns = () => current() && pending.current === item;
+        const valid = () => owns() && (action !== 'handoff' || handoffAllowed());
+        let returned = null;
+        const finishError = error => {
+          if (!owns()) return;
+          const keepPreview = action === 'integrate' && error.code === 'CONFLICTS';
+          update(previous => ({ ...previous, action: '', status: keepPreview ? previous.status : null,
+            preview: keepPreview ? previous.preview : null, diff: null,
+            result: returned ? { action, value: returned } : null, error: { action, code: diagnosticCode(error.code) || 'RPC_FAILED', message: boundedProjectText(error.message, 2048) } }));
+        };
+        item.timer = setTimeout(() => {
+          if (!owns()) return;
+          finishError(projectError({ code: 'WAIT_TIMEOUT' })); pending.current = null; abort.abort();
+        }, 120000);
+        update(previous => ({ ...previous, projectId: action === 'status' ? request.payload.projectId : previous.projectId,
+          action, error: null, result: null, preview: action === 'preview' || PROJECT_WRITES.has(action) && action !== 'integrate' ? null : previous.preview }));
+        const rpc = async (method, payload) => {
+          if (!valid()) throw projectError({ code: 'SESSION_STALE' });
+          const args = projectRequest(method, payload, sessionId);
+          const reply = await connection.rpc.call(RPC_CHANNEL, 'project', args, abort.signal);
+          if (!valid()) throw projectError({ code: 'SESSION_STALE' });
+          return projectReply(method, reply, args.payload.projectId || null);
+        };
+        try {
+          returned = await rpc(action, extra);
+          if (!valid()) return;
+          let projects = expected.projects, selected = action === 'bind' ? returned.projectId : request.payload.projectId || expected.projectId;
+          let status = expected.status, diff = null, preview = action === 'preview' ? returned : action === 'diff' ? expected.preview : null;
+          if (action === 'list' || PROJECT_WRITES.has(action)) {
+            projects = action === 'list' ? returned : await rpc('list', {});
+            if (!projects.some(project => project.projectId === selected)) selected = projects[0]?.projectId || '';
+            // Keep failed/provisional mappings selectable so an owner can inspect the reason or unbind them.
+            update(previous => ({ ...previous, projects, projectId: selected, status: null }));
+            status = selected && !projects.find(project => project.projectId === selected)?.error ? await rpc('status', { projectId: selected }) : null;
+          } else if (action === 'status') status = returned;
+          else if (action === 'diff' || action === 'preview') {
+            status = await rpc('status', { projectId: selected });
+            if (status.head !== returned.head) throw projectError({ code: 'HEAD_CHANGED' });
+            if (action === 'diff') diff = returned;
+          }
+          if (!valid()) return;
+          if (status) projects = projects.map(project => project.projectId === status.projectId ? status : project);
+          if (preview && (preview.projectId !== selected || preview.head !== status?.head)) preview = null;
+          const selectedError = projects.find(project => project.projectId === selected)?.error;
+          update(previous => ({ ...previous, projects, projectId: selected, status, diff, preview, action: '',
+            error: selectedError ? { action: 'status', ...selectedError } : null,
+            form: { ...previous.form, allowConflicts: false }, result: { action, value: returned } }));
+        } catch (error) { finishError(error); }
+        finally {
+          clearTimeout(item.timer);
+          if (pending.current === item) {
+            pending.current = null;
+            if (current() && live.current.model.action) update(previous => ({ ...previous, action: '' }));
+          }
+        }
+      }
+      React.useEffect(() => {
+        live.current.mounted = true;
+        const initial = update(projectModel());
+        if (initial) void run('list', {}, initial);
+        return () => {
+          if (live.current?.token === token) live.current.mounted = false;
+          const item = pending.current; pending.current = null;
+          if (item) { clearTimeout(item.timer); item.abort.abort(); }
+        };
+      }, [token]);
+      function change(key, value) {
+        if (!startable() || !Object.hasOwn(model.form, key)) return;
+        update(previous => ({ ...previous, form: { ...previous.form, [key]: value },
+          preview: ['ref', 'commit'].includes(key) ? null : previous.preview, error: null }));
+      }
+      const lines = value => value.split(/\r?\n/u).map(line => line.trim()).filter(Boolean);
+      const pathLines = value => value.split(/\r?\n/u).filter(line => line.length > 0);
+      function confirmRun(action, payload, message) {
+        if (!startable() || action === 'handoff' && !handoffAllowed()) return;
+        try { projectRequest(action, payload, sessionId); }
+        catch (error) { update(previous => ({ ...previous, error: { action, code: error.code, message: error.message } })); return; }
+        if (window.confirm(message) !== true || !startable() || action === 'handoff' && !handoffAllowed()) return;
+        return run(action, payload);
+      }
+      const status = model.status, form = model.form, preview = model.preview;
+      const mappedProject = model.projects.find(project => project.projectId === model.projectId) || null;
+      const writable = available && status?.allowWrites === true;
+      const style = { display: 'flex', flexDirection: 'column', gap: 8 };
+      const card = (title, ...children) => h('section', { style: { ...style, border: '1px solid currentColor', borderRadius: 9, padding: 10 } }, h('strong', null, title), ...children);
+      const text = value => h('pre', { style: { margin: 0, whiteSpace: 'pre-wrap', overflowWrap: 'anywhere', maxHeight: 300, overflow: 'auto' } }, boundedProjectText(value));
+      const field = (label, value) => h('div', null, h('small', null, label), text(value));
+      const input = (key, label, rows = 0) => h('label', { style }, label, h(rows ? 'textarea' : 'input', {
+        type: rows ? undefined : 'text', rows: rows || undefined, value: form[key], disabled: !available, autoComplete: 'off', spellCheck: false,
+        'aria-label': label, 'data-project-field': key, onChange: event => change(key, event.target.value),
+        style: { width: '100%', boxSizing: 'border-box', color: 'inherit', background: 'inherit' },
+      }));
+      const checkbox = (key, label, enabled = available) => h('label', { style: { display: 'flex', alignItems: 'flex-start', gap: 7 } }, h('input', {
+        type: 'checkbox', checked: form[key] === true, disabled: !enabled, 'data-project-field': key,
+        onChange: event => { if (enabled) change(key, event.target.checked === true); },
+      }), label);
+      const button = (action, label, onClick, enabled = available) => h('button', { type: 'button', disabled: !enabled,
+        'data-project-action': action, 'data-project-action-running': model.action === action || undefined,
+        onClick: () => { if (enabled && startable()) return onClick(); }, style: { padding: '6px 10px', alignSelf: 'flex-start' } }, label);
+      const changes = rows => rows?.length ? text(rows.map(row => `${row.status || row.index + row.worktree}  ${row.path}${row.originalPath ? ' ← ' + row.originalPath : ''}`).join('\n')) : h('small', null, t('projectClean'));
+      const diffView = data => data ? h('div', { style, 'data-project-diff': true }, changes(data.changes), text(data.diff),
+        data.truncated ? h('small', { role: 'note', 'data-project-truncated': true }, t('projectTruncated')) : null) : null;
+      const selectedPayload = status ? { projectId: status.projectId, expectedHead: status.head } : null;
+      return h('div', { 'data-project-section': true, 'data-project-state': model.action ? 'running' : model.error ? 'error' : status ? 'ready' : 'idle', style },
+        h('p', { style: { margin: 0 } }, t('projectIntro')),
+        h('div', { role: 'status', 'aria-live': 'polite' }, model.action ? t('projectBusy', { action: model.action }) : model.result ? t('projectReturned', { action: model.result.action }) : t('projectUnknown')),
+        model.error ? h('div', { role: 'alert', 'data-project-error-code': model.error.code }, t('projectError', model.error), text(model.error.message)) : null,
+        card(t('projectList'), button('list', t('refresh'), () => run('list')),
+          model.projects.length ? h('label', { style }, t('projectSelect'), h('select', { value: model.projectId, disabled: !available, 'data-project-select': true,
+            onChange: event => { if (startable() && model.projects.some(project => project.projectId === event.target.value)) return run('status', { projectId: event.target.value }); } },
+            ...model.projects.map(project => h('option', { key: project.projectId, value: project.projectId }, `${project.projectId} · ${project.mode} · ${project.participant}${project.error ? ' · ' + project.error.code : ''}`)))) : h('small', null, t('projectEmpty')),
+          model.projectId ? h('div', { style: { display: 'flex', gap: 6, flexWrap: 'wrap' } },
+            button('status', t('projectStatus'), () => run('status', { projectId: model.projectId })),
+            button('diff', t('projectDiff'), () => run('diff', { projectId: model.projectId }))) : null),
+        h('details', { 'data-project-registration': true }, h('summary', null, t('projectRegister')), card(t('projectRegister'),
+          h('small', null, t('projectRegisterHelp')), input('directory', t('projectDirectory')),
+          h('label', { style }, t('projectMode'), h('select', { value: form.mode, disabled: !available, 'data-project-field': 'mode', onChange: event => change('mode', event.target.value) },
+            h('option', { value: 'parallel' }, t('projectParallel')), h('option', { value: 'shared' }, t('projectShared')))),
+          input('targetBranch', t('projectTarget')), input('participant', t('projectParticipant')), input('projectId', t('projectId')), checkbox('allowWrites', t('projectWrites')),
+          button('bind', t('projectBind'), () => confirmRun('bind', { directory: form.directory, mode: form.mode, targetBranch: form.targetBranch,
+            participant: form.participant, projectId: form.projectId, allowWrites: form.allowWrites },
+          t('projectConfirmBind', { ...form, writes: t(form.allowWrites ? 'readinessYes' : 'readinessNo') }))))),
+        !status && mappedProject ? card(t('projectWorktree'), h('small', null, t('projectUnknown')), field('projectId', mappedProject.projectId),
+          field(t('projectWorktree'), mappedProject.worktree), mappedProject.root ? field(t('projectDirectory'), mappedProject.root) : null) : null,
+        status ? card(t('projectStatus'), field('projectId', status.projectId), field(t('projectMode'), status.mode),
+          status.root ? field(t('projectDirectory'), status.root) : null, field(t('projectWorktree'), status.worktree),
+          field(t('projectRemote'), status.remote), field(t('projectTarget'), status.targetBranch), field(t('projectWorkBranch'), status.workBranch),
+          field(t('projectHead'), status.head), field(t('projectBase'), status.baseCommit),
+          status.allowWrites ? null : h('strong', { 'data-project-readonly': true }, t('projectReadOnly')),
+          field(t('projectMerge'), t(status.merge.inProgress ? 'projectMerging' : 'projectNoMerge')),
+          status.merge.conflicts.length ? field(t('projectConflicts'), status.merge.conflicts.join('\n')) : null,
+          h('strong', null, t('projectChanges')), changes(status.changes),
+          status.truncated ? h('small', { role: 'note', 'data-project-truncated': true }, t('projectTruncated')) : null, diffView(model.diff)) : null,
+        status ? card(t('projectCheckpoint'), h('small', null, t('projectPathsHelp')), input('paths', t('projectPaths'), 3), input('message', t('projectMessage'), 2),
+          button('checkpoint', t('projectCheckpoint'), () => confirmRun('checkpoint', { ...selectedPayload, paths: pathLines(form.paths), message: form.message },
+            t('projectConfirmCheckpoint', { paths: pathLines(form.paths).join('\n'), message: form.message, head: status.head })), writable)) : null,
+        status ? card(t('projectPreview'), h('small', null, t('projectPreviewHelp')), input('ref', t('projectRef')), input('commit', t('projectCommit')),
+          button('preview', t('projectPreview'), () => run('preview', { projectId: status.projectId, ref: form.ref, commit: form.commit }), writable),
+          preview ? h('div', { style, 'data-project-preview': preview.previewId || 'dirty' }, field(t('projectPreviewId'), preview.previewId || t('statusUnknown')), field(t('projectIncoming'), preview.incomingCommit),
+            field('ref', preview.ref), preview.dirty ? h('strong', { role: 'note' }, t('projectDirty')) : null,
+            preview.conflicts.length ? field(t('projectConflicts'), preview.conflicts.join('\n')) : null, diffView(preview),
+            checkbox('allowConflicts', t('projectAllowConflicts'), writable && !preview.dirty),
+            button('integrate', t('projectIntegrate'), () => confirmRun('integrate', { projectId: status.projectId, previewId: preview.previewId,
+              ...(form.allowConflicts === true ? { allowConflicts: true } : {}) }, t('projectConfirmIntegrate', { previewId: preview.previewId,
+              commit: preview.incomingCommit, allowConflicts: t(form.allowConflicts ? 'readinessYes' : 'readinessNo') })), writable && !preview.dirty && !!preview.previewId && preview.head === status.head)) : null) : null,
+        status ? card(t('projectPublish'), h('small', null, t('projectPublishHelp')),
+          button('publish', t('projectPublish'), () => confirmRun('publish', selectedPayload, t('projectConfirmPublish', {
+            head: status.head, branch: status.mode === 'shared' ? status.targetBranch : status.workBranch })), writable && !status.merge.inProgress)) : null,
+        status ? card(t('projectHandoff'), h('small', null, t('projectHandoffHelp')), input('goal', t('fieldGoal'), 3), input('acceptance', t('fieldAcceptance'), 3),
+          input('taskScope', t('fieldScope'), 2), input('outputBudgetBytes', t('fieldBudget')),
+          button('handoff', t('projectHandoff'), () => confirmRun('handoff', { ...selectedPayload, goal: form.goal, acceptance: form.acceptance,
+            scope: lines(form.taskScope), outputBudgetBytes: Number(form.outputBudgetBytes) }, t('projectConfirmHandoff', { projectId: status.projectId, head: status.head })),
+          writable && handoffAllowed())) : null,
+        model.projectId && model.projects.some(project => project.projectId === model.projectId) ? button('unbind', t('projectUnbind'),
+          () => confirmRun('unbind', { projectId: model.projectId }, t('projectConfirmUnbind', { projectId: model.projectId }))) : null,
+        model.result ? h('details', { 'data-project-returned-action': model.result.action }, h('summary', null, t('projectResult')),
+          text(boundedProjectText(model.result.value, 16384))) : null);
+    }
     function AgentComponent({ connection, sessionId, locale, languageControl, capability }) {
       const t = translator(locale);
       const [observation, setObservation] = React.useState(null), [error, setError] = React.useState('');
@@ -2855,7 +3300,7 @@ OWNER_NATIVE_GUARD_BUSY OWNER_NATIVE_GUARD_UNKNOWN OWNER_NATIVE_PARENT_UNKNOWN`.
       const pairingId = value?.peer?.pendingPairingId;
       const cardStyle = { display: 'flex', flexDirection: 'column', gap: 9, padding: 12, border: '1px solid var(--border, #d1d5db)', borderRadius: 10 };
       const card = (title, ...children) => React.createElement('section', { style: cardStyle }, React.createElement('strong', null, title), ...children);
-      const tabs = [['connection', t('tabConnection')], ['history', t('tabHistory')], ['policy', t('tabPolicy')], ['help', t('tabHelp')]];
+      const tabs = [['connection', t('tabConnection')], ['project', t('tabProject')], ['history', t('tabHistory')], ['policy', t('tabPolicy')], ['help', t('tabHelp')]];
       const importantStyle = { padding: 12, border: '2px solid currentColor', borderInlineStartWidth: 6, borderRadius: 9, background: 'Canvas', color: 'CanvasText', opacity: 1, fontSize: 13, fontWeight: 600, lineHeight: 1.65 };
       const receiptNotice = React.createElement('aside', { role: 'note', 'aria-label': t('receiptImportantTitle'), 'data-agent-receipt-notice': true, style: importantStyle },
         React.createElement('strong', null, React.createElement('span', { 'aria-hidden': true }, 'ⓘ '), t('receiptImportantTitle')),
@@ -3120,7 +3565,12 @@ OWNER_NATIVE_GUARD_BUSY OWNER_NATIVE_GUARD_UNKNOWN OWNER_NATIVE_PARENT_UNKNOWN`.
             style: { flex: '1 1 auto', padding: '8px 10px', borderRadius: 7, fontWeight: panel.tab === id ? 600 : 400,
               border: '1px solid var(--border, #d1d5db)', background: panel.tab === id ? 'var(--muted, #eef2f6)' : 'transparent' } }, title))),
         React.createElement('div', { role: 'tabpanel', 'aria-label': tabs.find(([id]) => id === panel.tab)?.[1], 'data-agent-tab-panel': panel.tab },
-          panel.tab === 'connection' ? connectionPage : panel.tab === 'history' ? historyPage : panel.tab === 'policy' ? policyPage : helpPage),
+          panel.tab === 'connection' ? connectionPage : panel.tab === 'project' ? React.createElement(ProjectComponent, {
+            key: `project-${sessionId}-${panel.epoch}`, connection, sessionId, locale, projectScope: captured, epoch: panel.epoch,
+            isCurrent: () => currentPanel(panelFrame, 'project'), canStart: () => canBindHere() && currentPanel(panelFrame, 'project'),
+            handoffOwner: businessOwner,
+            canHandoff: () => panelLive.current?.owner === businessOwner && mutationReady('project') && !busy && !active.current && !panelRequest.current,
+          }) : panel.tab === 'history' ? historyPage : panel.tab === 'policy' ? policyPage : helpPage),
         observationError ? React.createElement('span', { role: 'alert', 'data-agent-observation-error': true }, t('observationError', { code: observationError })) : null,
         error ? React.createElement('span', { role: 'alert' }, t('agentError', { code: error })) : null) : null);
     }

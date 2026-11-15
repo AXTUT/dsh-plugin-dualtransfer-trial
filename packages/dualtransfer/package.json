@@ -1,12 +1,7 @@
 {
   "name": "dsh-plugin-dualtransfer",
-  "version": "0.2.0-candidate.6.9.reboot.3.market.3",
-  "description": "DualTransfer experimental bundle for paired, conversation-scoped Agent messaging. Not open source (UNLICENSED evaluation build, not for production); requires Node.js 24+, tested only on macOS arm64 and Windows 11 x64 build 22621+.",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org/",
-    "access": "public",
-    "tag": "latest"
-  },
+  "version": "0.2.0-candidate.6.9.reboot.3.project.3",
+  "description": "DualTransfer evaluation build with Git project collaboration: parallel branches, shared-baseline integration and commit-scoped Agent handoff. Not open source (UNLICENSED evaluation build, not for production); requires Node.js 24+ and Git 2.38+.",
   "license": "UNLICENSED",
   "type": "module",
   "main": "lib/pnpm-hotfix-entry-3.mjs",
@@ -26,6 +21,7 @@
   "files": [
     "README.md",
     "TRIAL-TERMS.md",
+    "docs/PROJECT-COLLABORATION.md",
     "control/CLOSURE-SHA256.json",
     "control/agent-wake.js",
     "control/package.json",
@@ -137,6 +133,10 @@
     "lib/operations.mjs",
     "lib/pnpm-hotfix-entry-3.mjs",
     "lib/private-fs.mjs",
+    "lib/project-collaboration.mjs",
+    "lib/project-git.mjs",
+    "lib/project-handoff.mjs",
+    "lib/project-integration.mjs",
     "lib/runtime.mjs",
     "lib/source-contract.mjs",
     "lib/storage.mjs",
@@ -192,5 +192,10 @@
     "agent-collaboration",
     "cross-device",
     "evaluation"
-  ]
+  ],
+  "publishConfig": {
+    "access": "public",
+    "registry": "https://registry.npmjs.org/",
+    "tag": "latest"
+  }
 }

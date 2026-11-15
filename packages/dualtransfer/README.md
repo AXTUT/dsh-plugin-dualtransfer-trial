@@ -1,46 +1,35 @@
-# DualTransfer 评估分发包
+# DualTransfer 项目协作候选
 
-版本：0.2.0-candidate.6.9.reboot.3.market.3。
+版本：`0.2.0-candidate.6.9.reboot.3.project.3`。基线为当前实际安装的 `0.2.0-candidate.6.9.reboot.3.market.3`。
 
-非开源（UNLICENSED 评估试用版，勿用于生产）；需要 Node.js 24+，仅在 macOS arm64 与 Windows 11 x64 build 22621+ 上测试。
+本候选增加两种 Git 协作方式：
 
-Not open source (UNLICENSED evaluation build, not for production); requires Node.js 24+, tested only on macOS arm64 and Windows 11 x64 build 22621+.
+- **分支并行**：两台电脑各用独立 worktree 和工作分支，同时保留两个版本。
+- **共同基线**：两端仍各自编辑，经预览、三方合并及普通推送，把双方提交汇合到共同分支。
 
-本构建面向公共 npm 分发，移除阻止发布的 `private: true`，保留 `UNLICENSED` 和原有评估条款。开发仓库仍为私有；公开安装包可以下载，不代表开源授权。请先阅读同目录 `TRIAL-TERMS.md`。安装包含可读 JavaScript/MJS、客户端实现及运行时必须校验的 PowerShell 源码；下载后的实现代码不保密。第三方 YAML ISC 通知保留。
+项目、精确提交与原有 Agent 任务交接关联。任务接收、传输 ACK 和业务完成分别处理；收到项目卡片后，由对端按本地已有权限核对并操作。
 
-## npm 安装与“发现”
+## 使用
 
-发布包名为 `dsh-plugin-dualtransfer`。在兼容的 Harness 测试配置中，通过官方插件管理器安装指定版本 `dsh-plugin-dualtransfer@0.2.0-candidate.6.9.reboot.3.market.3`；不要在正在使用的 profile 目录里手工运行 npm/pnpm。
+安装候选后，在原「Agent 协作」面板的「项目」页登记已有 Git 项目。登记时由本机用户显式授予当前会话写权限，插件创建单独的协作 worktree；原目录里的未提交文件及暂存内容保留。然后使用状态、差异、提交、预览、集成、发布和交接。
 
-Awesome DSH Plugin 公共索引根据 npm 的 `latest` 标签生成条目。这里的 `latest` 只表示默认分发版本，**本插件仍是评估试用版，不是稳定版**。进入“发现”还取决于公共目录完成扫描与发布、用户启用对应索引，以及宿主兼容性检查。目录 PR 合并不代表所有用户默认可见或获得官方推荐。
+完整步骤、冲突处理和限制见[项目协作说明](<docs/PROJECT-COLLABORATION.md>)。新 Agent 工具为 `dualtransfer_project`，与界面共用同一操作核心；项目登记和写权限选择由用户界面完成。
 
-market.3 相对 market.2 仅调整版本、npm 发布配置及本说明；运行代码、Native 文件、依赖声明和试用条款保持不变。旧版运行测试仍属于旧版，不作为本次新增业务验收。
+## 环境与分发
 
-## 环境
+- Node.js 24+，Git 2.38+。插件设置中的 `projectGitExecutable` 可填写本机 Git 可执行文件绝对路径；留空使用 `git`。这项设置不修改 PATH，Agent 和对端消息均无权指定它。
+- Harness 声明范围沿用 `0.2.1-rc.2 || >=0.2.2-rc.1 <0.2.3-0`。
+- 六项精确 SDK peer、Native 资源、通信及所有权格式沿用基线；以[包清单](<package.json>)为准。
+- 平台目标为 macOS arm64 与 Windows 11 x64 build 22621+；本候选的实际测试范围单列于随附报告，不把历史测试当作本轮验收。
 
-- Node.js `>=24`。
-- DeepSeek Harness 声明范围：`0.2.1-rc.2 || >=0.2.2-rc.1 <0.2.3-0`。保留旧测试基线，并放行当前 `0.2.2-rc.1` 起的 `0.2.2` 版本线；不自动放行 `0.2.3` 或 `0.3` 的预发布版。
-- 平台仅测试过 macOS arm64 和 Windows 11 x64 build 22621+；Intel Mac 未测试。Windows 仍需固定 NTFS 卷、私有 ACL 和允许执行 Native EXE 的系统策略，不提供绕过路径。
-- 六项精确 peerDependencies 保持原声明，需另行取得并遵守其条款：
-  - `@deepseek-ai/cordis`：`4.0.5`
-  - `@deepseek-ai/schemastery`：`3.18.5`
-  - `@deepseek-ai/dsh-scope`：`0.2.1-rc.2`
-  - `@deepseek-ai/dsh-tools`：`0.2.1-rc.2`
-  - `@deepseek-ai/dsh-llm`：`0.2.1-rc.2`
-  - `@deepseek-ai/dsh-session`：`0.2.1-rc.2`
+本候选在独立目录构建，通过本地 TGZ 交付，`private: true`，本轮不发布 npm 或改动市场条目。安装使用官方插件管理器，替换现有包后的 fresh JS 生效情况与文件安装结果分别核实。
 
-版本门控放行不代表新版 SDK 或完整业务已经验证。不要为消除依赖警告申请版本豁免、强制安装或手改 profile。
+## 评估条款及验证
 
-本包只包含预编译运行文件及必要资源，不包含开发、测试、Native 编译或维护工具，也没有安装期构建脚本。保留 Darwin 二进制、Windows EXE 及其运行校验依赖；这不表示新增平台运行验收。此目录本身不是 Registry 发布或市场上架记录。
+非开源（UNLICENSED 评估试用版，勿用于生产）；评估条款见[TRIAL-TERMS](<TRIAL-TERMS.md>)。
 
-## 本轮变更与验证边界
+Not open source (UNLICENSED evaluation build, not for production); requires Node.js 24+ and Git 2.38+.
 
-market.2 仅修订包元数据与说明：放宽宿主版本门控、补足平台及许可限制、把当前项目与反馈链接改为 `AXTUT`。其余运行文件、试用条款与执行位保持 market.1 的内容，不更换业务或 Native 实现。
-
-market.1 曾在 DSH `0.2.1-rc.2` 上完成 Mac、Windows 各八阶段的隔离官方安装生命周期；这是旧版本的历史结果，不是 market.2 的新安装验收。旧封存 reboot.3 的 Mac 七组、Windows 六组定向检查同样属于旧构建。
-
-本轮检查版本门控、官方索引解析及文件资源闭包；本机宿主仍为 `0.2.1-rc.2`。对 `0.2.2-rc.1` 的版本参数检查不是在该版本宿主上运行插件。新版宿主上的实际加载仍待复验，不承诺完整配对收发、端到端业务、模型自动处理、真实重启、掉电恢复或自动修复历史状态。详见[市场指南](<https://github.com/AXTUT/dsh-plugin-dualtransfer-trial/blob/main/market/README.md>)。
-
-评估前请备份并使用隔离环境，不要接入生产任务。提交反馈前请脱敏，不公开 token、密钥、完整会话、生产备份或 origin 文件。
+原有消息、绑定、历史、Native 和项目数据保持原状。本轮的本地真实 Git、受控桥接、纯 UI 与 Windows 同字节证据分别记录；不承诺逐键同步、完整模型端到端、无人值守可靠性、真实 OS 重启或掉电恢复。
 
 项目与反馈：https://github.com/AXTUT/dsh-plugin-dualtransfer-trial

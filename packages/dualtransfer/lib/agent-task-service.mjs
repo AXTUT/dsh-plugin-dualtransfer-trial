@@ -388,8 +388,9 @@ export function createAgentTaskService({ store, transport, getContext, now = Dat
         replyAuthorization: Object.freeze({ state: permission(snapshot, saved), revision: saved.gate.revision }) });
     } catch { return current(snapshot) ? outcome(item, { delivery: 'uncertain', uncertain: true, error: 'AGENT_DELIVERY_UNCERTAIN' }) : retired(item); }
   }
-  async function outgoing(type, payload, options = {}, referenceTaskId = null) {
+  async function outgoing(type, payload, options = {}, referenceTaskId = null, assertOwner = null) {
     const snapshot = capture();
+    if (assertOwner) owner(snapshot, assertOwner);
     // Copy caller-owned payload/options before queueing; never observe later edits.
     const copiedPayload = payloadFor(type, payload);
     requireValue(type !== 'message' || parseAgentReceipt(copiedPayload.text) === null, 'AGENT_RECEIPT_RESERVED');
@@ -405,7 +406,9 @@ export function createAgentTaskService({ store, transport, getContext, now = Dat
       (type !== 'task.request' || typeof copiedOptions.taskId === 'string' && UUID.test(copiedOptions.taskId)), 'AGENT_ID_GENERATION_FAILED');
     const createdAt = clock();
     return enqueue(snapshot, async () => {
+      if (assertOwner) owner(snapshot, assertOwner);
       const state = await history(snapshot);
+      if (assertOwner) owner(snapshot, assertOwner);
       let replyTo = null;
       if (referenceTaskId !== null) {
         requireValue(typeof referenceTaskId === 'string' && UUID.test(referenceTaskId), 'AGENT_TASK_REFERENCE_INVALID');
@@ -419,17 +422,22 @@ export function createAgentTaskService({ store, transport, getContext, now = Dat
       if (existing) requireValue(existing.direction === 'out' && sameRow(existing.row, item.row), 'AGENT_MESSAGE_CONFLICT');
       else applyEvent(state.tasks, item);
       requireValue(snapshot.sessionId !== null, 'AGENT_REPLY_SESSION_REQUIRED');
-      return transmit(snapshot, existing ?? item, !existing);
+      return transmit(snapshot, existing ?? item, !existing, assertOwner);
     });
   }
   async function sendMessage(payload, options) { return outgoing('message', payload, options); }
-  async function request(payload, options) {
+  async function requestWithOwner(payload, options, assertOwner = null) {
     requireValue(payload && typeof payload === 'object' && !types.isProxy(payload));
     const keys = Reflect.ownKeys(payload);
     record(payload, keys);
     requireValue(keys.length >= 3 && keys.every(key => ['goal', 'scope', 'acceptance', 'outputBudgetBytes'].includes(key)) &&
       ['goal', 'scope', 'acceptance'].every(key => keys.includes(key)));
-    return outgoing('task.request', { ...payload, outputBudgetBytes: Object.hasOwn(payload, 'outputBudgetBytes') ? payload.outputBudgetBytes : 4096 }, options);
+    return outgoing('task.request', { ...payload, outputBudgetBytes: Object.hasOwn(payload, 'outputBudgetBytes') ? payload.outputBudgetBytes : 4096 }, options, null, assertOwner);
+  }
+  async function request(payload, options) { return requestWithOwner(payload, options); }
+  async function requestOwned(payload, assertOwner) {
+    requireValue(typeof assertOwner === 'function' && !types.isProxy(assertOwner), 'AGENT_OPTIONS_INVALID');
+    return requestWithOwner(payload, undefined, assertOwner);
   }
   async function progress(payload, options) {
     record(payload, ['taskId', 'state', 'text']); return outgoing('progress', { state: payload.state, text: payload.text }, options, payload.taskId);
@@ -698,7 +706,7 @@ export function createAgentTaskService({ store, transport, getContext, now = Dat
   function protect(method) {
     return (...args) => method(...args).catch(error => { if (OWN_ERRORS.has(error)) throw error; fail('AGENT_SERVICE_FAILED'); });
   }
-  return Object.freeze({ sendMessage: protect(sendMessage), request: protect(request), progress: protect(progress), result: protect(result),
+  return Object.freeze({ sendMessage: protect(sendMessage), request: protect(request), requestOwned: protect(requestOwned), progress: protect(progress), result: protect(result),
     cancel: protect(cancel), status: protect(status), retry: protect(retry), receive: protect(receive), history: protect(businessHistory),
     replyPolicySnapshot: protect(publicPolicySnapshot), setReplyPolicy: protect(setReplyPolicy), approveReply: protect(approveReply),
     denyReply: protect(denyReply), clearHistory: protect(clearHistory), completeIncomingBatch: protect(completeIncomingBatch), flush: drain, drain, close });

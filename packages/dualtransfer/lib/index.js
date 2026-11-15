@@ -7,6 +7,7 @@ import { Session, SessionId } from '@deepseek-ai/dsh-session';
 import { createConfigSchema } from './config.mjs';
 import { createAgentOnlyController, createAgentOnlyRpcHandler } from './agent-plugin.mjs';
 import { failure } from './private-fs.mjs';
+import { createProjectBridge, createProjectRpcHandler, registerProjectTool } from './project-integration.mjs';
 const SESSION = /^session-[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$(?![\s\S])/u;
 const UUID_V4 = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$(?![\s\S])/u;
 const PRODUCT = Symbol.for('dsh.dualtransfer.product-owner.v1');
@@ -147,14 +148,14 @@ export function createAgentOperationManager(controller, isClosed = () => false) 
     },
   });
 }
-export function apply(ctx, _config) {
+export function apply(ctx, config = {}) {
   // 0.2 never starts/adopts the old App client, supervisor, fixed product lease or configuration tuple.
   return ctx.effect(() => {
     const releaseEntry = reserveEntry(ctx);
     let controller;
     try { controller = createAgentOnlyController({ ctx, defineTool, createUserMessage, Session, SessionId }); }
     catch (error) { releaseEntry(); throw error; }
-    const disposers = []; let closed = false;
+    const disposers = []; let closed = false, projects;
     const manager = createAgentOperationManager(controller, () => closed);
     const retire = () => disposers.splice(0).reverse().map(registration => {
       try {
@@ -166,7 +167,9 @@ export function apply(ctx, _config) {
       } catch (error) { return Promise.reject(error); }
     });
     try {
+      projects = createProjectBridge({ ctx, controller, isClosed: () => closed, gitExecutable: config?.projectGitExecutable });
       disposers.push(ctx.on('internal/plugin', rejectLegacy));
+      disposers.push(registerProjectTool(ctx, defineTool, projects));
       disposers.push(bindTool(ctx, manager));
       disposers.push(ctx.inject(['connection', 'webServer'], rpcCtx => {
         const connection = rpcCtx.connection; let prototype = connection, getter;
@@ -176,7 +179,9 @@ export function apply(ctx, _config) {
         const agent = createAgentOnlyRpcHandler(ctx, connection, controller, (ownerCtx, sessionId, options) => resolveLocalContext(ownerCtx, sessionId,
           { ...options, assertCurrent: () => !closed && (options.assertCurrent === undefined || options.assertCurrent() === true) }));
         const compatibility = createRpcHandler(ctx, connection, manager, () => closed);
+        const project = createProjectRpcHandler(connection, projects, () => closed);
         return rpc.handle(RPC_CHANNEL, async (method, ...args) => {
+          if (method === 'project') return project(method, ...args);
           if (method === 'agent') return agent(method, ...args);
           const reply = await compatibility(method, ...args);
           // A retained C4 operation must still switch the new renderer to the Agent-only panel.
@@ -184,7 +189,7 @@ export function apply(ctx, _config) {
         });
       }));
     } catch (error) {
-      closed = true; Promise.all([controller.dispose(), ...retire()]).then(releaseEntry, () => {}); throw error;
+      closed = true; Promise.all([controller.dispose(), projects?.close(), ...retire()]).then(releaseEntry, () => {}); throw error;
     }
     let disposal = null;
     return () => {
@@ -192,7 +197,7 @@ export function apply(ctx, _config) {
       if (disposal) return disposal;
       closed = true;
       let drain; try { drain = controller.dispose(); } catch (error) { drain = Promise.reject(error); }
-      disposal = Promise.allSettled([drain, ...retire()]).then(results => {
+      disposal = Promise.allSettled([drain, projects?.close(), ...retire()]).then(results => {
         const failed = results.find(result => result.status === 'rejected');
         if (failed) throw failed.reason;
         releaseEntry();
