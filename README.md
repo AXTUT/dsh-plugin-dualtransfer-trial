@@ -1,145 +1,42 @@
-# DualTransfer：Windows 与 Mac 的双机 Agent 协作
+# DualTransfer：跨电脑 Agent 与 Git 项目协作
 
-让两台电脑上的 DeepSeek Harness Agent 交换消息、分派任务、报告进度和回传结果。你可以在 Mac 上发起工作，把需要 Windows 环境的部分交给另一端 Agent，再把结果带回来继续整合；反向分工也一样。
+DualTransfer 是 DeepSeek Harness 的第三方实验插件。它让两台已配对、已绑定的电脑交换 Agent 消息、任务、进度和结果，并把项目的精确 Git commit 附在任务交接里。
 
-DualTransfer 是 Harness 内的实验插件。两端通过加密直连建立连接，分别绑定自己的本机会话，不需要另装 Dual Transfer App。除 Win/Mac 互联外，设计也支持同系统双机；实际验证范围见下方记录。
-
-- [下载 market.3 安装包（Windows / macOS，无需 Git）](https://github.com/AXTUT/dsh-plugin-dualtransfer-trial/releases/download/market.3/dsh-plugin-dualtransfer-0.2.0-candidate.6.9.reboot.3.market.3.tgz)。下载后，在 DSH 插件管理器中使用该 `.tgz` 文件的本地路径安装。
-- [market.3 评估版安装指南](market/README.md) · [npm 包与版本](https://www.npmjs.com/package/dsh-plugin-dualtransfer) · [社区目录收录记录](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/13419)
-- [历史封存包：6.9 reboot.3](<https://github.com/AXTUT/dsh-plugin-dualtransfer-trial/releases/tag/demo-6.9-reboot.3>)
-- [首发时测试记录（历史）](<TEST-RESULTS.md>) · [Windows 同包补充验收（历史）](<TEST-RESULTS-REBOOT3-WINDOWS.md>) · [试用与许可说明](<TRIAL-TERMS.md>)
-- [反馈问题](<https://github.com/AXTUT/dsh-plugin-dualtransfer-trial/issues/new>) · [反馈模板](<.github/ISSUE_TEMPLATE/bug_report.md>)
-
-非开源（UNLICENSED 评估试用版，勿用于生产）；需要 Node.js 24+，仅在 macOS arm64 与 Windows 11 x64 build 22621+ 上测试。
+**当前版本：`0.2.0-candidate.6.9.reboot.3.project.3`。**
 
 Not open source (UNLICENSED evaluation build, not for production); requires Node.js 24+, tested only on macOS arm64 and Windows 11 x64 build 22621+.
 
-本仓库提供实验安装包、校验文件和试用反馈入口；源码仓库保持私有。请先用隔离环境和非敏感任务试用。market.1 的 Mac、Windows 各八阶段安装结果保留为历史，不冒充 market.2 或新宿主上的完整业务验收。
+非开源（UNLICENSED 评估试用版，勿用于生产）；需要 Node.js 24+，仅在 macOS arm64 与 Windows 11 x64 build 22621+ 上测试。
 
-## 可以用它做什么
+## 这版新增什么
 
-### 把上下文交给另一台电脑的 Agent
+- **分支并行**：两端在各自受管理的 worktree / 分支工作，保留两个版本，不自动覆盖对方工作区。
+- **共同基线**：先获取对端提交、预览差异和冲突，再按显式操作汇入共同分支。存在冲突时停下来处理，不静默选择一方。
+- **带版本的任务交接**：交接卡包含项目标识、模式、分支和精确 commit；接收端仍需自己的本机项目映射和既有授权。
+- **本机 Git 路径**：设置中的 `projectGitExecutable` 可指定现有 Git 的本机绝对路径；留空时按 PATH 查找。不安装 Git、不修改 PATH，路径也不随任务发给另一端。
 
-发送问题、约束或检查结果，让另一端在自己绑定的会话里接着处理，不必反复复制整段对话。传递的是 Agent 业务消息，不是两端所有聊天记录的全量同步。
+## 下载与安装
 
-### 按机器环境分工
+- [最新项目协作版 Release](https://github.com/AXTUT/dsh-plugin-dualtransfer-trial/releases/tag/project.3)
+- [安装说明与市场索引](market/README.md)
+- [当前包的项目协作说明](packages/dualtransfer/docs/PROJECT-COLLABORATION.md)
+- [本版验证结果和边界](TEST-RESULTS-PROJECT3.md)
+- [问题与反馈](https://github.com/AXTUT/dsh-plugin-dualtransfer-trial/issues)
 
-例如，你在 Mac 上分析问题，需要 Windows 端核对平台行为或运行本机允许的检查。可以发出任务请求，让 Windows 端 Agent 使用它已有的工具和权限处理，再返回进度与结果。它不是插件内置的构建或部署服务，能做什么取决于接收端环境。
+npm 的既有频道为 [`dsh-plugin-dualtransfer`](https://www.npmjs.com/package/dsh-plugin-dualtransfer)。本版 npm 发布状态以 [安装说明](market/README.md) 和 registry 的实际版本为准；GitHub 发布不代表 npm 已同步。
 
-### 组织跨机处理流程
+## 已验证与未验证
 
-两端配对、绑定会话，并配置本机收件动作、明确任务授权后，可以组织这样的流程：
+本版候选在 macOS arm64、Windows 11 x64 上分别完成 **60/60 定向检查**，Windows 原始证据已取回并独立核验。检查使用真实本地 bare remote、clone、worktree，涵盖 Git 核心、桥接、UI、owner 交接、配置隔离和指定 Git 路径。
 
-```text
-Mac 端 Agent ── 目标、范围、验收条件 ──▶ Windows 端 Agent
-             ◀──── 进度、结果报告 ─────
-核对结果，继续整合                      在本机已有权限内处理
-```
+这不是完整 Host / 模型端到端验收，也不是两台物理电脑同时写同一个远程仓库的实测结果。公开包为 npm 发布移除了 `private:true` 并增加 `publishConfig`；其余 **131 个文件与受测候选逐字节相同**。没有用发布动作代替功能验收，旧候选和失败原件均保留。
 
-实验性的收件通知链路可把新批次通知排入目标 Agent 会话。是否继续处理，还取决于本机事先配置的动作、已有授权、Harness 的模型调度和可用工具。**自动通知可靠性与无人值守处理尚未证明，不能把它理解为“收到任何远端文字就直接执行”。**
+DSH 声明范围是 `0.2.1-rc.2 || >=0.2.2-rc.1 <0.2.3-0`。此前对真实 0.2.2-rc.1 SDK 做过限定的版本门控、source-contract 和入口形状检查，未完成该宿主版本的完整安装、挂载及双机模型运行验收；六个 peer 依赖版本保持不变。
 
-## 已有的协作能力
+## 接续与许可
 
-| 能力 | 怎么用 |
-| --- | --- |
-| 文本消息 | 在当前有效配对和绑定范围内交换 Agent 消息，查看方向、消息 ID 和收件情况。 |
-| 结构化任务请求 | 明确目标、允许范围、验收条件与输出预算，让另一端知道要做什么、做到哪里停止。 |
-| 进度与结果 | 围绕同一个任务 ID 回报受理、进行中、受阻、等待授权，以及成功、失败、需授权或取消的结果报告。 |
-| 状态查询与取消请求 | 查询已有关联任务；向自己发起的任务发送取消请求。请求取消不等于已经停止。 |
-| 收件回执 | 可选自动事实回执、每次询问或不回执；新设置默认自动事实回执。它不是自动执行权限。 |
-| 业务历史 | 按本机会话和配对范围审阅消息与回执；清理展示不会删除任务、去重或 ACK 事实。 |
+接收消息进入后续 Agent 回合，需要配对、绑定、已配置的收件动作以及接收端本机既有权限。远端消息不增加权限，也不自动恢复 Goal。空闲监听没有让模型反复轮询，但有本地计时器；真正处理任务仍消耗模型 Token。无人值守通知的可靠性尚未完成端到端验证。
 
-传输 ACK、通知进入会话、事实回执和任务结果是不同的事。对端报告成功后，发起端仍应按验收条件核对，不能把送达当作完成。
+当前实验评估版免费试用，插件本身不收费。这不等于开源、永久免费或商用授权；完整开发源码仍留在私库。公开包含运行所需的 JS、资源和原生辅助程序，具体约束见 [评估条款](TRIAL-TERMS.md)。请勿上传凭证、私有会话或敏感项目内容。
 
-## 第一次试用：先跑一个小任务
-
-两端都使用同一版本和同一安装包哈希。界面入口叫 **Agent协作**，包含连接、消息历史、收件回执和使用帮助。
-
-1. **配对**：使用对方可达的地址和实际监听端口，通过可信私密渠道交换短时邀请，在两端核对设备指纹并批准连接。邀请含密钥，不要贴进公开聊天、issue 或日志。
-2. **绑定会话**：在两台机器上分别人工绑定需要协作的本机会话，检查当前连接是否就绪。配对不等于绑定，换会话不会自动迁移绑定。
-3. **先测消息**：发送一条不含敏感信息的随机标记，亲自确认对端收到的是正确内容、正确会话。
-4. **明确本机授权**：在接收端先说明允许的任务和禁止动作，并按 Harness 的要求完成必要审批。不要靠远端消息替本机授权。
-5. **发只读任务**：先核对操作系统和 Node.js 版本，不安装依赖、不改文件、不读取无关目录。检查是否实际处理并回传结果；缺少权限时应报告等待授权。
-6. **核对返回**：区分“已收到”“进行中”和实际结果。确认这条小任务后，再逐步扩大测试范围。
-
-接收端本机工作指令可以这样写：
-
-> 允许来自已配对端的一次只读环境核对任务，仅使用本机已批准的工具报告操作系统和 Node.js 版本。不安装依赖、不修改文件、不读取无关数据；缺少权限时先报告等待授权。
-
-发起端可以这样描述任务：
-
-> 请把环境核对任务发给已配对端 Agent。目标是报告操作系统和 Node.js 版本；范围仅为上述只读检查。验收条件是明确列出两项结果，无法取得的项目说明原因，不用猜测值。
-
-这些是任务说明示例，不是插件提供的权限沙箱或一个名为“工作流模式”的开关。插件不会替你创建或恢复 Goal，也不直接调用模型执行远端文本。完整双机 Host/Agent/模型流程尚未验收，这些步骤是建议试用路径，不是已经录制成功的演示。
-
-## 历史封存构建：6.9 reboot.3
-
-以下记录属于封存版本 `0.2.0-candidate.6.9.reboot.3`，不是 market.2 的新运行验收。macOS 与 Windows 共用一个安装包；reboot.3 新增 Windows Native 持久根证据，保留 Darwin 的重启／重新挂载检查。
-
-当前同包 macOS arm64 的七组定向检查已通过；当前 Roslyn Windows helper 的六组定向检查为 6/6，16 个 actor 的实际退出、close 与双 EOF 均已核验。详细范围见[Windows 同包补充验收](<TEST-RESULTS-REBOOT3-WINDOWS.md>)；[首发时测试记录（历史）](<TEST-RESULTS.md>)保留发布当时的状态，不回写原始记录。这些定向检查不等于真实双机模型业务已经通过。
-
-验收核对了同一 TGZ 的 142 个 payload、144 个 stage 文件、冻结定向定义，以及 142 文件的 reboot.1 旧参考，前后均未变。当前包内 Roslyn helper 为 33,280 字节，SHA-256 为 `4e40e340ce4a6076de3c35046fe3d2e749135ef2ad72cfcfede941758203df19`。外层核对的是 Python communicate/wait 与双 EOF，未单独记录外层 Node `close` 事件。一个故障 actor 以自身退出完成收容，不是成功 runtime drain；未测试其退出后的 guard 重获。
-
-当前 Windows Native/kernel 为真实执行，boot/enrol 历史、部分负例 probes 与注入故障为合成场景。本结果不覆盖真实系统重启、完整 Host/Peer/Core/Store/模型链路、实际双机 E2E、Intel Mac 或掉电，也不是稳定版或性能保证。
-
-源码仓库保持私有，但安装包内的 JavaScript、客户端源码及部分 Native 构建源码可被下载者查看。私有仓库不意味着安装包的代码保密，公开下载也不等于开源授权。公开附件不包含完整维护源码 ZIP。
-
-## 环境要求
-
-market.3 沿用 market.2 的 DSH 兼容范围 `0.2.1-rc.2 || >=0.2.2-rc.1 <0.2.3-0`，需要 Node.js 24 或更新版本。市场指南记录了各版本的[验证范围](market/README.md)。包声明以下六项 peer dependencies。
-
-| 依赖 | 精确版本 |
-| --- | --- |
-| `@deepseek-ai/cordis` | `4.0.5` |
-| `@deepseek-ai/schemastery` | `3.18.5` |
-| `@deepseek-ai/dsh-scope` | `0.2.1-rc.2` |
-| `@deepseek-ai/dsh-tools` | `0.2.1-rc.2` |
-| `@deepseek-ai/dsh-llm` | `0.2.1-rc.2` |
-| `@deepseek-ai/dsh-session` | `0.2.1-rc.2` |
-
-这些依赖由兼容宿主提供，未随本安装包捆绑，插件不会自动安装 SDK。出现缺失或版本冲突时请记录警告并停止，不要用 `--force`、手改 profile 或自动补装未知版本来绕过。
-
-历史 reboot.3 隔离定向运行覆盖 macOS arm64 与 Windows x64；Intel Mac 未测试。Windows 试用仍需满足原 Native 条件，包括 Windows 11 x64、build 22621 或更新、固定 NTFS 卷及私有 ACL；系统策略禁止执行 Native EXE 时不提供绕过路径。历史 Windows 同包定向验收不等于真实系统重启验收。
-
-## 安装封存 reboot.3 TGZ
-
-当前 npm 评估构建为 `0.2.0-candidate.6.9.reboot.3.market.3`。安装来源和兼容版本见[市场指南](market/README.md)。下列步骤适用于历史封存 TGZ。
-
-1. 先备份现有数据，并优先使用独立的 Harness 测试配置。安装影响所选 profile 中的所有会话，不只是当前聊天。
-2. 从上方 Release 下载 `dsh-plugin-dualtransfer-0.2.0-candidate.6.9.reboot.3.tgz`、`PACKAGE-SHA256.json` 和 `SHA256SUMS.txt`。这里的封存 TGZ 仍按本地包安装；不要与另一个版本名的市场评估构建混用。
-3. 核对 TGZ：`479394` 字节，SHA-256：
-
-   `54429f67cbce106e74ccc9e774273aa182f692816070556e8db192f1b661bd06`
-
-4. 在目标 Harness 中，让 Agent 使用官方插件管理器，将已下载 TGZ 的本地绝对路径作为 `install_bundle` 目标。不要直接修改 profile 文件或在 profile 目录运行 npm/pnpm。
-5. 检查安装结果和依赖警告。确认正常完全退出后，重新打开整个 Harness，以加载新的 Host 和 Client 代码；只刷新浏览器不能重载 Host。安装成功不代表消息收发、重启恢复或旧根维护已经验证。
-
-请勿把未完成退出的服务强制当作已停止，也不要让测试 Agent 自动迁移、清锁或修复原有生产根。上文 reboot.3 定向测试没有执行安装或生产根操作；另做的 market.1 安装验证仅作用于全新隔离测试配置，没有操作现有生产根。
-
-## Windows 跨系统重启的条件
-
-Windows 旧根必须在原先同一个 boot 内成功提交过 Native anchor，跨 boot 时还要核对完整历史链的最新 owner，以及当前 Native 读取的 machine、volume 和目录身份。Windows 不使用 Darwin 的 `dev` 映射，也不会把 unknown 当作 owner 已死亡。
-
-如果旧根已经跨 boot，却没有所需的历史 Native anchor，仍会返回 `OWNER_ROOT_ORIGIN_REQUIRED`。操作者说明和当前机器身份都不能补造历史证明；缺少所需固件信息或持久 NTFS 身份时也会拒绝。这次补丁不保证所有旧根都能恢复。
-
-请只在隔离测试环境中试用，不接入生产任务。遇到所有权拒绝时不要删锁、改日志或强行运行维护工具。
-
-## 已知边界
-
-- 不支持自动局域网发现、短 PIN 配对和二维码扫描；双方地址与端口需要可达，不承诺任意网络环境下自动连通。
-- 不提供全量聊天同步、通用文件同步、远程桌面或可视化工作流编辑器。
-- 自动收件通知仍是实验能力；不能承诺可靠无人值守、及时触达或模型自动完成。
-- Windows 跨 boot 恢复受上述历史 Native anchor 条件限制；当前同包六组 6/6、16 个 actor 的定向验收不保证所有旧根均能恢复。
-- macOS 的历史 boot/dev 变更使用合成场景，当前 Native 和 guards 为真实执行；进程重开不等于真实系统重启。本轮没有重启系统，也没有掉电测试。
-- 所有权日志每段仍为 4 MiB，成员上限仍为 128；分段不回收旧段，也不保证磁盘总量不增长。
-- 未知所有者、损坏或部分记录、未结束屏障及失败退出会拒绝接管；不要通过清理证据绕过。
-- 界面上的清理历史只改变展示范围，不删除任务、去重或 ACK 事实。
-- 完整 Host/Peer/Core/模型自动处理端到端测试尚未完成。通知出现、安装成功或连接状态不代表整条流程已经通过。
-
-基础消息试用后，也可通过正常 Stop 等待关闭完成，再在同一次系统启动内 Start，记录成功步骤与明确错误码。不要把这项检查记成真实系统重启测试。
-
-## 试用反馈
-
-请提供版本、包哈希、两端系统与 Harness 版本、发送方向，以及卡在连接、收件、处理还是结果回传。附可复现步骤和脱敏错误码；时间请带时区。
-
-不要上传邀请、token、密钥、完整会话数据、生产备份、origin 文件、硬件标识或 Windows SID。反馈模板见[这里](<.github/ISSUE_TEMPLATE/bug_report.md>)。
+旧版结果保留在 [原验证记录](TEST-RESULTS.md) 和 [reboot.3 Windows 记录](TEST-RESULTS-REBOOT3-WINDOWS.md)，它们不替代本版或新版宿主验收。

@@ -1,86 +1,53 @@
-# DualTransfer 自维护市场源（评估版）
+# DualTransfer 安装与版本
 
-这是可添加到 DSH 的自维护插件索引，不是官方默认市场收录，也不代表官方推荐。插件继续按[原有试用条款](<../TRIAL-TERMS.md>)提供；源码开发仓库仍然私有，许可仍为 UNLICENSED。
+当前 GitHub 项目协作版：`0.2.0-candidate.6.9.reboot.3.project.3`。
 
-## 已发布的地址
+Not open source (UNLICENSED evaluation build, not for production); requires Node.js 24+, tested only on macOS arm64 and Windows 11 x64 build 22621+.
 
-日常使用的索引地址：
+非开源（UNLICENSED 评估试用版，勿用于生产）；需要 Node.js 24+，仅在 macOS arm64 与 Windows 11 x64 build 22621+ 上测试。
+
+## 安装入口
+
+在 Harness 插件管理器中安装 [Release 的 TGZ](https://github.com/AXTUT/dsh-plugin-dualtransfer-trial/releases/tag/project.3)，或使用这个自托管索引：
 
 ```text
 https://raw.githubusercontent.com/AXTUT/dsh-plugin-dualtransfer-trial/main/market/index.json
 ```
 
-market.1 历史验证固定的索引地址（保留原提交，不代表当前版本）：
+索引的新版本固定到不可变 Git commit，旧版本入口仍保留。公开源码树中的 `packages/dualtransfer` 是已构建运行包，不包含完整开发工程；请通过插件管理器操作，不手工修改 profile 或 node_modules。
+
+既有 npm 包名是 `dsh-plugin-dualtransfer`。**本版 npm 仍待发布账号登录；目前不能把 registry 的 `latest` 当作项目协作版。** 本次不会替用户处理密码、验证码或 2FA。完成发布后将把这里更新成实际版本与链接。
+
+目录入口和本地市场可能存在各自的更新周期。目录 PR 合并不等于当前客户端已经搜到；曾对本机旧客户端检查过，搜索未命中。请以当前客户端的真实结果为准。
+
+## Git 项目协作准备
+
+需要已有 Git，版本至少 **2.38**，以及两端都能访问的项目远端。不要把真实凭证、Token 或带密码的 URL 放进交接卡。
+
+`projectGitExecutable` 是可选的**本机设置**：留空使用 PATH；若 Git 已安装但 Harness 的 PATH 找不到，可以填写这个现成可执行文件的绝对路径。它不会自动安装 Git、修改 PATH、发现用户目录，也不会把这个路径同步给对端。Windows 路径仅是示意，不代表你的实际安装位置：
 
 ```text
-https://raw.githubusercontent.com/AXTUT/dsh-plugin-dualtransfer-trial/36f03d9924ebf5adff122dd54330423792a83919/market/index.json
+C:\Users\YOUR_NAME\AppData\Local\GitHubDesktop\app-VERSION\resources\app\git\cmd\git.exe
 ```
 
-- 插件名：`dsh-plugin-dualtransfer`。
-- npm 评估版为 `dsh-plugin-dualtransfer@0.2.0-candidate.6.9.reboot.3.market.3`。通过兼容的 DSH 插件管理器安装此版本，或在启用 Awesome DSH Plugin 公共索引后到“发现”中搜索 `dualtransfer`。公共搜索需要等待上游索引发布。
-- market.3 使用 npm 精确版本。market.2 和 market.1 使用 Git 子目录 `packages/dualtransfer`，各自的固定提交见索引中的 `source.commit`。
-- market.2 的 DSH 声明范围为 `0.2.1-rc.2 || >=0.2.2-rc.1 <0.2.3-0`：保留旧基线，放行维护者当前的 `0.2.2` 版本线，不自动放行 `0.2.3` 或 `0.3` 预发布版。Node.js 仍需 24 或更高版本；六个精确 peer dependency 声明不变，未申请版本豁免。
+分支并行保留两个版本；共同基线模式先预览差异和冲突，再显式应用。冲突不会被静默覆盖。具体操作见 [项目协作说明](../packages/dualtransfer/docs/PROJECT-COLLABORATION.md)。
 
-非开源（UNLICENSED 评估试用版，勿用于生产）；需要 Node.js 24+，仅在 macOS arm64 与 Windows 11 x64 build 22621+ 上测试。
+## 当前验证边界
 
-Not open source (UNLICENSED evaluation build, not for production); requires Node.js 24+, tested only on macOS arm64 and Windows 11 x64 build 22621+.
-
-market.2 只更新元数据、文档和当前账号链接，不改业务或 Native 代码。版本门控放行不等于完整新版 SDK 或业务兼容。下列 Mac、Windows 八阶段安装记录属于 market.1；不把旧测试、旧安装字节数或旧生产安装记录改写为 market.2 的验收。
-
-## 使用方式
-
-先在独立配置或测试环境中操作，并保留旧配置与数据。DSH 的插件市场组件属于默认关闭的可选组件；需要先启用它，再在市场的索引来源设置中添加上述地址。不同 DSH 版本的界面可能不同，以该版本的市场组件说明为准。
-
-从该索引中选择 DualTransfer，并先以禁用状态安装。若插件管理器提示需要重启，正常退出并重新打开对应的测试配置，不要把关闭页签当作 Host 重启。启用、禁用和卸载均走官方插件管理器，不手工编辑配置目录里的依赖、锁文件或补丁文件，也不清理所有权锁、强退协作服务或改 Native 文件权限来绕过失败。
-
-市场安装和插件挂载不等于开启协作服务、绑定会话或授权执行任务。双机配对、绑定与接续处理仍受接收端的本机配置及既有授权限制。
-
-## market.3 分发验证
-
-在 macOS arm64 的独立 npm 项目里安装了待发布的 TGZ，核对了全部 127 个文件的内容和执行位，以及六项 peer dependencies 的精确版本。插件入口加载成功，默认配置为停用。DSH 市场索引解析器能生成这个版本的 npm 安装目标。Windows 安装和完整双机业务仍以各版本标明的实测范围为准。
-
-## market.2 本轮验证边界（2026-11-10）
-
-本轮修订宿主版本门控、双语限制说明和当前账号链接，保留业务、Native、试用条款及原有权限。只将版本门控、官方索引解析、文件闭包和明确记载的隔离 SDK 检查作为本轮证据；不将这些检查称为完整新版 Host、Windows、双机或模型验收。以下旧版八阶段结果不覆盖 market.2，也不保证新版宿主或第三方依赖组合兼容。
-
-本轮已完成的限定检查：
-
-- 官方版本门控接受原 `0.2.1-rc.2` 与目标 `0.2.2-rc.1`，拒绝边界外版本；官方索引解析器从保留的两个版本中选出 market.2，并生成固定提交安装目标。
-- 在独立 HOME、store、cache 与配置目录中，从 npm 官方 registry 实际取得五个 DSH SDK 包 `0.2.2-rc.1`、Cordis `4.1.0` 和 Schemastery `3.19.0`，禁用安装脚本。五项限定 SDK 检查通过，五包的 registry 完整性值与新 lock 一致。
-- 新 SDK 的真实默认版本为 `0.2.2-rc.1`；其门控对原 market.2 清单的显式与默认版本检查均接受，仅将声明换回旧精确版本的负例被拒绝，未使用版本豁免。
-- 未修改的纯内存 `source-contract` 返回 `verified`；原入口可导入，Config、inject 和导出形状检查通过。未调用 `apply`，挂载和卸载明确未测。
-- 127 个分发文件与隔离副本的检查前后字节、SHA-256、权限均一致；相对 market.1 仅清单和包内 README 改变，125 个其他文件（含 124 个运行时/资源文件及试用条款）不变。各成功检查的父子进程均采集到 exit/close 0 与双 EOF。
-
-这不是官方插件管理器安装或完整 Host 服务图验证，未证明原精确 peer 组合的新版安装兼容。未运行 Native、协作服务、真实模型或双机传输。首次本地 pnpm 因不支持 `--state-dir` 在下载前退出，失败原件保留；仅移除此 flag 后首次网络安装成功，未换源或另起网络重试。不能据此声称新版无警告、Windows 验收或无人值守可靠性通过。
-
-## market.1 历史验证（2026-11-07）
-
-| 项目 | 历史记录 |
+| 项目 | 实际结果 |
 | --- | --- |
-| 最小分发闭包 | 127 文件；124 个旧运行时文件字节不变，另含新元数据、说明与原文试用条款 |
-| 官方索引解析器 | 已通过当前安装的 `0.2.1-rc.2` 官方解析器 |
-| 公网索引回读 | 日常地址和固定提交地址均已匿名返回 HTTP 200，无重定向，字节一致 |
-| Mac 全新配置中的官方安装生命周期 | 已通过 8 个全新官方 Host 进程：启用市场、禁用安装、核验停用、启用、核验启用、停用、卸载、核验卸载；每个进程均正常退出并收到双 EOF |
-| Windows 同包市场安装生命周期 | 已通过 R2 的 8 个全新官方 Host 进程；Mac 已收齐 119 份原件并完成主审和独立复核，保留测试策略授权及依赖警告边界 |
-| 浏览器界面点击、双机业务及模型链路 | 不在这次后端安装生命周期证明范围内 |
-| 官方推荐源或默认市场收录 | 当时未申请；后续目录 PR 状态另见下文，不代表已收录 |
+| project.3 macOS arm64 定向检查 | 60/60；原始进程证据已核验 |
+| project.3 Windows 11 x64 定向检查 | 60/60；原始 ZIP 已接回并独立核验 |
+| 公开包与受测候选 | 132 文件中 131 文件逐字节相同；只改 npm 发布所需 manifest 元数据 |
+| 本版真实双机同仓库协作 | 尚未实测，是发布后的下一步 |
+| 新版宿主完整安装、挂载和模型运行 | 未验证；旧 SDK 限定检查不代替它 |
 
-Mac 验证使用真实官方 `runProfile`、市场与插件管理器，不是浏览器自动化。五份安装观测各含 127 文件、1,436,011 字节，逐项核对了字节数和 SHA-256；不是 635 个不同文件。Darwin helper 的 Git 可执行位为 `100755`，实际安装权限为 `0700`，保留执行位。启用后的 Host Tool、产品所有权、客户端模块图和官方 `fetchBundle` handler 响应已核验；没有浏览器挂载或真实 HTTP 请求证明，也没有启动协作业务或调用模型。
+受测候选、公开发布包分别有自己的 SHA，不混称为同一 TGZ。原候选不重包、不覆盖，旧失败证据不删除。详见 [本版结果](../TEST-RESULTS-PROJECT3.md)。
 
-Windows 使用 Node 24.17、Electron 43、x64 和官方 SDK `0.2.1-rc.2` 完成同样的八阶段。五份安装观测各含 127 文件、1,436,011 字节；每个阶段都保存了自然 exit/close、双 EOF，以及等待官方 shutdown 和根 fiber 后的释放记录。Mac 端核对的是收到的原件和逐文件观测，不是直接访问 Windows 安装目录。客户端接口保存的是条目、图版本和响应长度、SHA-256；没有保存完整图或响应 body，也没有浏览器或真实 HTTP 验证。
+## 兼容、权限与条款
 
-Windows 旧准备在 `Restricted` 下尚未执行 helper 就停止，原失败记录保留。取得本次明确授权后，仅封存的只读 ACL helper 子进程使用 `RemoteSigned`，未修改用户或系统的持久策略。14 份保存的 ACL 原始输出通过核对；控制进程事后只读观测仍为 `Restricted`、五项 scope 为 `Undefined`。这不是对其他机器签名、文件来源或组策略兼容性的保证，也不是任意脚本的执行授权。
+DSH 范围：`0.2.1-rc.2 || >=0.2.2-rc.1 <0.2.3-0`；这不是未来版本全部 API 兼容的承诺。六个 peer 依赖版本未升级，新 SDK 的依赖安装兼容性也没有在本轮重新验收。
 
-安装器操作成功且结构化 warnings 数组为空，但 pnpm 原始输出不能省略：Windows 保留了 `ENOTFOUND` 后的内部 GET 重试、构建脚本被忽略、六项 missing peer 警告，最终包管理器 exit 0。驱动没有另起整轮重试，不代表 pnpm 内部没有重试。未另行允许运行安装脚本、手工执行 profile pnpm、补装 SDK、申请版本豁免或改 Native 权限来补过测试；不能称为“依赖无警告”，也不保证其他宿主兼容。
+两端须先配对、绑定，并由接收端按本机既有授权处理任务。消息不会授予新权限或恢复 Goal。空闲监听无模型轮询，处理任务仍消耗 Token。当前实验评估版免费试用，许可仍为 `UNLICENSED`，完整源码仍为私有；不是开源或商用许可。详见 [评估条款](../TRIAL-TERMS.md)。
 
-首轮驱动错误及原失败记录均保留。Mac 隔离测试当时仅核对选定的 3 个管理文件和 142 个旧安装文件；Windows 选定的 5 条基线记录前后一致，其中 4 条包含内容 SHA-256，1 条只有元数据。两者都不是对全部生产数据的审计。这次没有证明 Native 执行、双机业务、模型调用、真实系统或 DSH 重启、任意后代进程 join，以及业务已经运行时的完整 Host drain。
-
-隔离验证通过后，已按用户授权通过官方插件管理器将同一市场版安装到当前 Mac 配置，另行核对了全部 127 个安装文件、1,436,011 字节及各自的 SHA-256。管理器报告已应用，但尚未验证正常重开后的全新 JS 实例；未自行重启 DSH 或系统，也未启动协作业务、重新绑定会话或改变生产数据及权限。不能把后续这次授权安装与此前的“旧安装未变”记录混为一谈。
-
-[包内 README](<../packages/dualtransfer/README.md>)记录的是构建时的验证状态。后续安装结果另作补充记录，不覆盖固定提交中的分发文件或旧版发布资产。旧 reboot.3 的 Mac 7/7、Windows 6/6 定向验证，不代替这次市场安装验证，也不等于真实系统重启或完整 Host/模型端到端验证。
-
-## 目录申请状态
-
-[社区插件目录 PR #13419](https://github.com/awesome-dsh-plugin/awesome-dsh-plugin/pull/13419) 已合并。公共索引根据 npm 的默认版本 `latest`、发布时间和仓库地址生成。使用这个索引的用户可以在上游更新后搜索插件。
-
-如提交后续反馈，请附版本和固定提交、平台与 DSH 版本、复现步骤及已知未验证项。不要发送原始本机日志、会话内容、访问令牌、配对密钥或内部路径。目录审核不影响用户自行添加这个索引；无需为复验改动生产配置或原始数据。
+旧 market.1 的 Mac / Windows 各 8 项安装生命周期结果，以及以前的 SDK 限定检查，仅属于其原版本，不转记为本版的完整安装、运行或端到端通过。
